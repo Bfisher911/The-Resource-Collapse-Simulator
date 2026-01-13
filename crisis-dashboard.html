@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Command Center Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            animation: pulse-border 3s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(0, 255, 136, 0.5);
+            }
+        }
+
+        h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #888;
+            letter-spacing: 2px;
+        }
+
+        /* Status Display */
+        .status-display {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 204, 255, 0.3);
+        }
+
+        .status-label {
+            font-size: 0.9em;
+            color: #888;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .status-text {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #00ff88;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .status-text.alert {
+            color: #ff3366;
+            animation: flash 1s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+            padding: 20px;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .metric-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            color: #00ccff;
+        }
+
+        /* Circular Progress Bar */
+        .circular-progress {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .progress-bg {
+            fill: none;
+            stroke: #1a1a2e;
+            stroke-width: 15;
+        }
+
+        .progress-bar {
+            fill: none;
+            stroke-width: 15;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1.5s ease, stroke 0.5s ease;
+        }
+
+        .progress-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5em;
+            font-weight: 700;
+            transition: color 0.5s ease;
+        }
+
+        .progress-green {
+            stroke: #00ff88;
+        }
+
+        .progress-yellow {
+            stroke: #ffd700;
+        }
+
+        .progress-red {
+            stroke: #ff3366;
+        }
+
+        .text-green { color: #00ff88; }
+        .text-yellow { color: #ffd700; }
+        .text-red { color: #ff3366; }
+
+        /* Control Panel */
+        .control-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff3366;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.3);
+        }
+
+        .panel-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ff3366;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .scenario-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .scenario-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #ff9900;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            font-size: 1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-scenario {
+            background: linear-gradient(135deg, #ff9900, #ff6600);
+            color: white;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(255, 153, 0, 0.3);
+        }
+
+        .btn-scenario:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 153, 0, 0.5);
+        }
+
+        .btn-scenario:active {
+            transform: translateY(0);
+        }
+
+        .btn-scenario:disabled {
+            background: #333;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .choice-buttons {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #444;
+        }
+
+        .choice-buttons.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-choice {
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            color: white;
+            width: 100%;
+            margin: 5px 0;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .btn-choice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 153, 255, 0.5);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #666, #888);
+            color: white;
+            display: block;
+            margin: 30px auto 0;
+            padding: 15px 40px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .metrics-grid,
+            .scenarios-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .circular-progress {
+                width: 150px;
+                height: 150px;
+            }
+
+            .progress-value {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 Hospital Command Center</h1>
+            <div class="subtitle">Crisis Management Dashboard</div>
+        </header>
+
+        <div class="status-display">
+            <div class="status-label">SYSTEM STATUS</div>
+            <div id="statusText" class="status-text">NORMAL OPERATIONS</div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Staff Safety & Morale</div>
+                <div class="circular-progress">
+                    <svg>
+                        <circle class="progress-bg" cx="100" cy="100" r="85"></circle>
+                        <circle id="staffBar" class="progress-bar progress-green" cx="100" cy="100" r="85"></circle>
+                    </svg>
+                    <div id="staffValue" class="progress-value text-green">100%</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Patient Capacity & Care Quality</div>
+                <div class="circular-progress">
+                    <svg>
+                        <circle class="progress-bg" cx="100" cy="100" r="85"></circle>
+                        <circle id="patientBar" class="progress-bar progress-green" cx="100" cy="100" r="85"></circle>
+                    </svg>
+                    <div id="patientValue" class="progress-value text-green">100%</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Public Trust & Reputation</div>
+                <div class="circular-progress">
+                    <svg>
+                        <circle class="progress-bg" cx="100" cy="100" r="85"></circle>
+                        <circle id="trustBar" class="progress-bar progress-green" cx="100" cy="100" r="85"></circle>
+                    </svg>
+                    <div id="trustValue" class="progress-value text-green">100%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="panel-title">⚠️ Scenario Injection</div>
+
+            <div class="scenarios-grid">
+                <div class="scenario-section">
+                    <div class="scenario-title">Scenario 1: Chemical Spill Upwind</div>
+                    <button id="scenario1Btn" class="btn btn-scenario">Activate Scenario</button>
+                    <div id="scenario1Choices" class="choice-buttons">
+                        <button class="btn btn-choice" data-choice="lockdown">Choice A: Lockdown & Seal</button>
+                        <button class="btn btn-choice" data-choice="ventilate">Choice B: Ventilate & Evacuate</button>
+                    </div>
+                </div>
+
+                <div class="scenario-section">
+                    <div class="scenario-title">Scenario 2: Long-Term Power Failure</div>
+                    <button id="scenario2Btn" class="btn btn-scenario">Activate Scenario</button>
+                    <div id="scenario2Choices" class="choice-buttons">
+                        <button class="btn btn-choice" data-choice="divert">Choice A: Divert Incoming Patients</button>
+                        <button class="btn btn-choice" data-choice="accept">Choice B: Keep Accepting Patients</button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="resetBtn" class="btn btn-reset">Reset Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard state
+        let metrics = {
+            staff: 100,
+            patient: 100,
+            trust: 100
+        };
+
+        // Calculate circle circumference
+        const radius = 85;
+        const circumference = 2 * Math.PI * radius;
+
+        // Initialize progress bars
+        document.querySelectorAll('.progress-bar').forEach(bar => {
+            bar.style.strokeDasharray = circumference;
+            bar.style.strokeDashoffset = 0;
+        });
+
+        // Update progress bar
+        function updateProgress(barId, valueId, percentage) {
+            const bar = document.getElementById(barId);
+            const valueDisplay = document.getElementById(valueId);
+
+            // Clamp percentage between 0 and 120
+            const clampedPercent = Math.max(0, Math.min(120, percentage));
+
+            // Calculate offset (reverse for clockwise)
+            const offset = circumference - (clampedPercent / 100) * circumference;
+            bar.style.strokeDashoffset = offset;
+
+            // Update color based on value
+            bar.classList.remove('progress-green', 'progress-yellow', 'progress-red');
+            valueDisplay.classList.remove('text-green', 'text-yellow', 'text-red');
+
+            if (clampedPercent > 75) {
+                bar.classList.add('progress-green');
+                valueDisplay.classList.add('text-green');
+            } else if (clampedPercent >= 40) {
+                bar.classList.add('progress-yellow');
+                valueDisplay.classList.add('text-yellow');
+            } else {
+                bar.classList.add('progress-red');
+                valueDisplay.classList.add('text-red');
+            }
+
+            // Update text
+            valueDisplay.textContent = Math.round(clampedPercent) + '%';
+        }
+
+        // Update status text
+        function updateStatus(text, isAlert = false) {
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = text;
+
+            if (isAlert) {
+                statusText.classList.add('alert');
+            } else {
+                statusText.classList.remove('alert');
+            }
+        }
+
+        // Apply metric changes with animation
+        function applyChanges(staffChange, patientChange, trustChange, statusText) {
+            metrics.staff += staffChange;
+            metrics.patient += patientChange;
+            metrics.trust += trustChange;
+
+            updateProgress('staffBar', 'staffValue', metrics.staff);
+            updateProgress('patientBar', 'patientValue', metrics.patient);
+            updateProgress('trustBar', 'trustValue', metrics.trust);
+
+            const isAlert = metrics.staff < 75 || metrics.patient < 75 || metrics.trust < 75;
+            updateStatus(statusText, isAlert);
+
+            // Disable all scenario buttons after a choice is made
+            document.querySelectorAll('.btn-scenario').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+
+        // Scenario 1: Chemical Spill
+        document.getElementById('scenario1Btn').addEventListener('click', function() {
+            document.getElementById('scenario1Choices').classList.add('active');
+            this.disabled = true;
+            document.getElementById('scenario2Btn').disabled = true;
+        });
+
+        document.querySelectorAll('#scenario1Choices .btn-choice').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const choice = this.dataset.choice;
+
+                if (choice === 'lockdown') {
+                    // Lockdown & Seal: Patient -10%, Staff -20%, Trust +5%
+                    applyChanges(-20, -10, 5,
+                        'STATUS: FACILITY SEALED. CONTAMINATION CONTAINED EXTERNAL. INTERNAL STAFF STRAIN INCREASING.');
+                } else if (choice === 'ventilate') {
+                    // Ventilate & Evacuate: Staff -40%, Patient -25%, Trust -15%
+                    applyChanges(-40, -25, -15,
+                        'STATUS: VENTILATION ACTIVE. EXPOSURE INCIDENTS REPORTED. EVACUATION CHAOS.');
+                }
+
+                // Hide choice buttons
+                document.getElementById('scenario1Choices').classList.remove('active');
+            });
+        });
+
+        // Scenario 2: Power Failure
+        document.getElementById('scenario2Btn').addEventListener('click', function() {
+            document.getElementById('scenario2Choices').classList.add('active');
+            this.disabled = true;
+            document.getElementById('scenario1Btn').disabled = true;
+        });
+
+        document.querySelectorAll('#scenario2Choices .btn-choice').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const choice = this.dataset.choice;
+
+                if (choice === 'divert') {
+                    // Divert: Staff stable, Patient stable, Trust -30%
+                    applyChanges(0, 0, -30,
+                        'STATUS: DIVERSION PROTOCOL ACTIVE. COMMUNITY BACKLASH SIGNIFICANT. INTERNAL RESOURCES STABLE.');
+                } else if (choice === 'accept') {
+                    // Keep Accepting: Staff -20%, Patient -60%, Trust stable
+                    applyChanges(-20, -60, 0,
+                        'STATUS: ACCEPTING ALL. SYSTEMS CRITICAL. CARE STANDARDS COLLAPSING. FATALITIES LIKELY.');
+                }
+
+                // Hide choice buttons
+                document.getElementById('scenario2Choices').classList.remove('active');
+            });
+        });
+
+        // Reset button
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            // Reset metrics
+            metrics = { staff: 100, patient: 100, trust: 100 };
+
+            updateProgress('staffBar', 'staffValue', 100);
+            updateProgress('patientBar', 'patientValue', 100);
+            updateProgress('trustBar', 'trustValue', 100);
+
+            updateStatus('NORMAL OPERATIONS', false);
+
+            // Re-enable scenario buttons
+            document.querySelectorAll('.btn-scenario').forEach(btn => {
+                btn.disabled = false;
+            });
+
+            // Hide all choice buttons
+            document.querySelectorAll('.choice-buttons').forEach(choices => {
+                choices.classList.remove('active');
+            });
+        });
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            updateProgress('staffBar', 'staffValue', 100);
+            updateProgress('patientBar', 'patientValue', 100);
+            updateProgress('trustBar', 'trustValue', 100);
+        });
+    </script>
+</body>
+</html>
